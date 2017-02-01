@@ -1,0 +1,16 @@
+/.idea
+/build
+/dist
+/testreport.xml
+/output
+/os.env.cfg
+*.egg-info
+/*.tar.gz
+*.pyc
+*.pyo
+*.sw?
+.DS_Store
+/*.svg
+/*.png
+/*.jpeg
+/*.jpg
