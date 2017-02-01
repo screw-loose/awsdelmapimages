@@ -2,6 +2,7 @@ from __future__ import absolute_import
 
 # standard.
 import json
+import logging
 from os import environ
 from subprocess import check_call
 import traceback
@@ -40,7 +41,8 @@ def main():
         traceback.print_exc()
         suffix = 'ERROR'
 
-    # copy the log to S3 for review.
+    # flush logs, then copy the log to S3 for review.
+    logging.shutdown()
     copy_log(config['bucket'], config['version'], suffix)
 
 
