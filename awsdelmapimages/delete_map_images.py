@@ -27,7 +27,7 @@ def delete_map_images(config):
 
     # delete map tiles images; this generally takes awhile.
     print('==================== START TILE DELETION:')
-    pool = Pool(16)
+    pool = Pool(8)
     pool.map(_delete_by_index, range(2 ** _max_zoom), chunksize=8)
     print('==================== END TILE DELETION.')
 

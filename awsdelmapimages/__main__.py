@@ -10,14 +10,16 @@ import traceback
 from awsdelmapimages.delete_map_images import delete_map_images
 
 
-def copy_log(bucket, version):
+def copy_log(bucket, version, suffix):
+    suffix = "" if suffix is None else '_' + suffix
     print('copying: /var/log/cloud-init-output.log')
     args = ['aws', 's3', 'cp', '/var/log/cloud-init-output.log',
-            's3://{}/maps/tasks/delete_map_images_{}.log'.format(bucket, version)]
+            's3://{}/maps/tasks/delete_map_images_{}{}.log'.format(bucket, version, suffix)]
     check_call(args)
 
 
 def main():
+    suffix = None
     config = dict(bucket='glsmap', version='ERROR')
     try:
         cfg_str = environ.get('SCRIPT_CONFIG', "{}")
@@ -36,9 +38,10 @@ def main():
             delete_map_images(config)
     except Exception:
         traceback.print_exc()
+        suffix = 'ERROR'
 
     # copy the log to S3 for review.
-    copy_log(config['bucket'], config['version'])
+    copy_log(config['bucket'], config['version'], suffix)
 
 
 if __name__ == '__main__':
