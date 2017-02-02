@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 
 
-from multiprocessing import Pool
+from multiprocessing.dummy import Pool
 from subprocess import check_output
 import boto3
 
