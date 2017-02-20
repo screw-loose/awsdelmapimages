@@ -28,7 +28,10 @@ def copy_log(bucket, version, suffix):
 
 
 def main():
+    # config logging, and quiet noise from other packages that may be in use.
     logging.basicConfig(level=logging.DEBUG, filename=_LOG_FILE_NAME)
+    for name in ('boto', 'boto3', 'botocore'):
+        logging.getLogger(name).setLevel(logging.INFO)
 
     suffix = None
     config = dict(bucket='glsmap', version='ERROR')
