@@ -72,7 +72,7 @@ def _delete_keys(s3_cli, hash, bucket, keys):
     if err_keys:
         # recursive call to retry failed keys.
         _logger.info('** {} ERRORS; retrying'.format(len(err_keys)))
-        _delete_keys(s3_cli, bucket, err_keys)
+        _delete_keys(s3_cli, hash, bucket, err_keys)
 
 
 def _delete_by_index(index):
