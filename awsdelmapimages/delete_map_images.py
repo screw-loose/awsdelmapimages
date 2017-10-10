@@ -11,20 +11,20 @@ import boto3
 _logger = logging.getLogger()
 
 # private data; also inherited by child processes.
-_cli = None
+_region_name = None
 _bucket = None
 _version = None
 _max_zoom = None
 
 
 def delete_map_images(config):
-    global _cli
+    global _region_name
     global _bucket
     global _version
     global _max_zoom
 
     # store config values in global context for child processes.
-    _cli = boto3.client('s3', region_name=config['region'])
+    _region_name = config['region']
     _bucket = config['bucket']
     _version = config['version']
     _max_zoom = config['max_zoom']
@@ -78,5 +78,8 @@ def _delete_keys(s3_cli, hash, bucket, keys):
 def _delete_by_index(index):
     hash, keys = _generate_keys_for(index, _version, _max_zoom)
     _logger.info('========== hash=0x{} ({}) [START] =========='.format(hash, index))
-    _delete_keys(_cli, hash, _bucket, keys)
+
+    # note: boto3 client is not thread-safe.
+    cli = boto3.client('s3', region_name=_region_name)
+    _delete_keys(cli, hash, _bucket, keys)
     _logger.info('========== hash=0x{} ({}) [END] =========='.format(hash, index))
