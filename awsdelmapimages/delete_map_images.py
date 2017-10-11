@@ -79,7 +79,15 @@ def _delete_by_index(index):
     hash, keys = _generate_keys_for(index, _version, _max_zoom)
     _logger.info('========== hash=0x{} ({}) [START] =========='.format(hash, index))
 
-    # note: boto3 client is not thread-safe.
-    cli = boto3.client('s3', region_name=_region_name)
+    # note: boto3 session is not thread-safe.
+    # this code ran flawlessly for over a year before we started seeing the exception
+    # "KeyError: 'credential_provider'" every time we tried to delete a map.
+    # more info here:
+    # https://github.com/boto/botocore/issues/577
+    # http://boto3.readthedocs.io/en/latest/guide/resources.html?highlight=threaded#multithreading-multiprocessing
+    #
+    # using a thread-specific session seems to clear things up.
+    s3 = boto3.session.Session()
+    cli = s3.client('s3', region_name=_region_name)
     _delete_keys(cli, hash, _bucket, keys)
     _logger.info('========== hash=0x{} ({}) [END] =========='.format(hash, index))
